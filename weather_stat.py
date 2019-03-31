@@ -6,6 +6,7 @@ import adafruit_bme280
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import RPi.GPIO as GPIO
+from datetime import datetime
 from blink import blink, off
 
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -27,8 +28,17 @@ ax1 = fig.add_subplot(3, 1, 1)
 ax2 = fig.add_subplot(3, 1, 2)
 ax3 = fig.add_subplot(3, 1, 3)
 
+text1 = ax1.text(0,40,'')
+text2 = ax2.text(0,70,'')
+text3 = ax3.text(0,1150,'')
+
+text1.set_text("0")
+text2.set_text("0")
+text3.set_text("0")
+
 xs = list(range(0, 200))
 
+# initialize array of same size as x
 y1 = [0] * x_len
 y2 = [0] * x_len
 y3 = [0] * x_len
@@ -36,10 +46,6 @@ y3 = [0] * x_len
 ax1.set_ylim(y1_range)
 ax2.set_ylim(y2_range)
 ax3.set_ylim(y3_range)
-
-ax1.set_title("Temperature")
-ax2.set_title("Humidity")
-ax3.set_title("Pressure")
 
 # Create a blank line. We will update the line in animate
 line1, = ax1.plot(xs, y1)
@@ -54,6 +60,10 @@ def animate(i, y1, y2, y3):
     y2.append(bme280.humidity)
     y3.append(bme280.pressure)
 
+    text1.set_text('Temperature: {}'.format(int(bme280.temperature)))
+    text2.set_text('Humidity: {}'.format(int(bme280.humidity)))
+    text3.set_text('Pressure: {}'.format(int(bme280.pressure)))
+
     # Limit y list to set number of items
     y1 = y1[-x_len:]
     y2 = y2[-x_len:]
@@ -64,14 +74,10 @@ def animate(i, y1, y2, y3):
     line2.set_ydata(y2)
     line3.set_ydata(y3)
 
-    return line1,line2,line3
+    return line1,line2,line3, text1, text2, text3
 
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig,
-    animate,
-    fargs=(y1,y2,y3,),
-    interval=50,
-    blit=True)
+ani = animation.FuncAnimation(fig, animate, fargs=(y1,y2,y3,), interval=50, blit=True)
 
 def main():
     thread = threading.Thread(target=blink, args=())

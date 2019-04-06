@@ -1,5 +1,6 @@
 from PyNomaly import loop
 import numpy as np
+from weather_stat import getDataPoints
 
 train_data = np.array([
     [23.3, 50.2, 1020  ],
@@ -18,5 +19,5 @@ test_scores = []
 test_array = np.array([21, 53, 1020])
 test_scores.append(train_set.stream(test_array))
 
-print(test_scores)
-
+# print(test_scores)
+print(getDataPoints())

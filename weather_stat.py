@@ -79,6 +79,10 @@ def animate(i, y1, y2, y3):
 # Set up plot to call animate() function periodically
 ani = animation.FuncAnimation(fig, animate, fargs=(y1,y2,y3,), interval=50, blit=True)
 
+def getDataPoints():
+    return y1;
+
+
 def main():
     thread = threading.Thread(target=blink, args=())
     thread.daemon = True
